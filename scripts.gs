@@ -1,18 +1,29 @@
 function doGet() {
   const data = getSheetData();
-  const contentObj = {"data": data}
+  const contentObj = { "data": data };
   return ContentService.createTextOutput(JSON.stringify(contentObj))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
 function getSheetData() {
-  const ss = SpreadsheetApp.openById("1_K-oGmWHoiDZXUw41GLtyr5jbG6Ko0QM2g1DcMIjM-U")
-  Logger.log(ss);
-  const dataSheet = ss.getSheetByName("JANUARY");
-  Logger.log(dataSheet);
-  const range = dataSheet.getDataRange()
-  Logger.log(range);
-  var data = range.getValues();
-  Logger.log(data);
-  return data;
+  const ss = SpreadsheetApp.openById("spreadsheet ID");
+  const sheets = ss.getSheets();
+
+  const monthNames = [
+    "january", "february", "march", "april", "may", "june", 
+    "july", "august", "september", "october", "november", "december"
+  ];
+
+  let allData = {};
+
+  sheets.forEach(sheet => {
+    const sheetName = sheet.getName().toLowerCase(); // Convert sheet name to lowercase
+    console.log(sheet.getName());
+    if (monthNames.includes(sheetName)) { // Check if it's a month (case insensitive)
+      const range = sheet.getDataRange();
+      allData[sheet.getName()] = range.getValues(); // Store data using the original sheet name
+    }
+  });
+
+  return allData;
 }
